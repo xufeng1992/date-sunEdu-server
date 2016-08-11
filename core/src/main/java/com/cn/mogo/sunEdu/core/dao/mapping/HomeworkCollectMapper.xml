@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.mogo.sunEdu.core.dao.HomeworkCollectMapper" >
+    <resultMap id="BaseResultMap" type="com.cn.mogo.sunEdu.core.model.HomeworkCollect" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="homework_name" property="homeworkName" jdbcType="VARCHAR" />
+        <result column="pubdate" property="pubdate" jdbcType="TIMESTAMP" />
+        <result column="deadline" property="deadline" jdbcType="TIMESTAMP" />
+        <result column="homework_ids" property="homeworkIds" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="BIT" />
+        <result column="creater_id" property="createrId" jdbcType="INTEGER" />
+        <result column="group_ids" property="groupIds" jdbcType="VARCHAR" />
+        <result column="student_ids" property="studentIds" jdbcType="VARCHAR" />
+        <result column="homework_pic" property="homeworkPic" jdbcType="VARCHAR" />
+        <result column="total_number" property="totalNumber" jdbcType="INTEGER" />
+        <result column="total_points" property="totalPoints" jdbcType="INTEGER" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <resultMap id="HomeworkCollResultMap" type="com.cn.mogo.sunEdu.core.model.HisHomeworkCollBean" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="homework_name" property="homeworkName" jdbcType="VARCHAR" />
+        <result column="pubdate" property="pubdate" jdbcType="TIMESTAMP" />
+        <result column="deadline" property="deadline" jdbcType="TIMESTAMP" />
+        <result column="homework_ids" property="homeworkIds" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="BIT" />
+        <result column="creater_id" property="createrId" jdbcType="INTEGER" />
+        <result column="group_ids" property="groupIds" jdbcType="VARCHAR" />
+        <result column="student_ids" property="studentIds" jdbcType="VARCHAR" />
+        <result column="homework_pic" property="homeworkPic" jdbcType="VARCHAR" />
+        <result column="total_number" property="totalNumber" jdbcType="INTEGER" />
+        <result column="total_points" property="totalPoints" jdbcType="INTEGER" />
+        <collection property="answerSheetList" ofType="com.cn.mogo.sunEdu.core.model.AnswerSheet" resultMap="AnswerSheetResultMap"></collection>
+
+    </resultMap>
+
+    <resultMap id="AnswerSheetResultMap" type="com.cn.mogo.sunEdu.core.model.AnswerSheet" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="student_id" property="studentId" jdbcType="INTEGER" />
+        <result column="subject_id" property="subjectId" jdbcType="INTEGER" />
+        <result column="sub_collect" property="subCollect" jdbcType="INTEGER" />
+        <result column="pic_address" property="picAddress" jdbcType="VARCHAR" />
+        <result column="score" property="score" jdbcType="DOUBLE" />
+        <result column="teacher_voice" property="teacherVoice" jdbcType="VARCHAR" />
+        <result column="teacher_comment" property="teacherComment" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="BIT" />
+
+
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, homework_name, pubdate, deadline, homework_ids, status, creater_id, group_ids,
+        student_ids,homework_pic,total_number,total_points,remark
+    </sql>
+
+
+    <select id="hisHomeworkCollList" resultMap="HomeworkCollResultMap" parameterType="java.lang.Integer">
+        select *
+        FROM t_homework_collect hc, t_answer_sheet ah
+        WHERE find_in_set(#{groupId, jdbcType=INTEGER},hc.group_ids) AND hc.id = ah.sub_collect AND hc.status=0 AND (sec_to_time(hc.deadline) - sec_to_time(now())) >-(24 *7* 3600)
+    </select>
+
+    <select id="yetUpload" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        SELECT t.homework_name,t.total_number,t.id,t.group_ids
+        FROM t_homework_collect t WHERE creater_id =#{teacher_id, jdbcType=INTEGER} AND t.status=0 AND t.id NOT IN (SELECT hwc_id FROM t_answers WHERE t.creater_id = t_answers.teacher_id ) AND (now() - t.pubdate )>0 AND (DATE_ADD(t.deadline,INTERVAL 7 DAY)- NOW())>0 ;
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from t_homework_collect
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from t_homework_collect
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="publishHomeWork" parameterType="com.cn.mogo.sunEdu.core.model.HomeworkCollect" useGeneratedKeys="true">
+        insert into t_homework_collect (homework_name, pubdate,
+        deadline, homework_ids, status,
+        creater_id, group_ids, student_ids,homework_pic,total_number,total_points,remark
+        )
+        values (#{homeworkName,jdbcType=VARCHAR}, #{pubdate,jdbcType=TIMESTAMP},
+        #{deadline,jdbcType=TIMESTAMP}, #{homeworkIds,jdbcType=VARCHAR}, #{status,jdbcType=BIT},
+        #{createrId,jdbcType=INTEGER}, #{groupIds,jdbcType=VARCHAR}, #{studentIds,jdbcType=VARCHAR} ,#{homeworkPic,jdbcType=VARCHAR},#{totalNumber,jdbcType=INTEGER},#{totalPoints,jdbcType=INTEGER},#{remark,jdbcType=VARCHAR}
+        )
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID() AS id
+        </selectKey>
+    </insert>
+    <insert id="insert" parameterType="com.cn.mogo.sunEdu.core.model.HomeworkCollect" >
+        insert into t_homework_collect (id, homework_name, pubdate,
+        deadline, homework_ids, status,
+        creater_id, group_ids, student_ids
+        )
+        values (#{id,jdbcType=INTEGER}, #{homeworkName,jdbcType=VARCHAR}, #{pubdate,jdbcType=TIMESTAMP},
+        #{deadline,jdbcType=TIMESTAMP}, #{homeworkIds,jdbcType=VARCHAR}, #{status,jdbcType=BIT},
+        #{createrId,jdbcType=INTEGER}, #{groupIds,jdbcType=VARCHAR}, #{studentIds,jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.cn.mogo.sunEdu.core.model.HomeworkCollect" >
+        insert into t_homework_collect
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="homeworkName != null" >
+                homework_name,
+            </if>
+            <if test="pubdate != null" >
+                pubdate,
+            </if>
+            <if test="deadline != null" >
+                deadline,
+            </if>
+            <if test="homeworkIds != null" >
+                homework_ids,
+            </if>
+            <if test="status != null" >
+                status,
+            </if>
+            <if test="createrId != null" >
+                creater_id,
+            </if>
+            <if test="groupIds != null" >
+                group_ids,
+            </if>
+            <if test="studentIds != null" >
+                student_ids,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="homeworkName != null" >
+                #{homeworkName,jdbcType=VARCHAR},
+            </if>
+            <if test="pubdate != null" >
+                #{pubdate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deadline != null" >
+                #{deadline,jdbcType=TIMESTAMP},
+            </if>
+            <if test="homeworkIds != null" >
+                #{homeworkIds,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null" >
+                #{status,jdbcType=BIT},
+            </if>
+            <if test="createrId != null" >
+                #{createrId,jdbcType=INTEGER},
+            </if>
+            <if test="groupIds != null" >
+                #{groupIds,jdbcType=VARCHAR},
+            </if>
+            <if test="studentIds != null" >
+                #{studentIds,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.cn.mogo.sunEdu.core.model.HomeworkCollect" >
+        update t_homework_collect
+        <set >
+            <if test="homeworkName != null" >
+                homework_name = #{homeworkName,jdbcType=VARCHAR},
+            </if>
+            <if test="pubdate != null" >
+                pubdate = #{pubdate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deadline != null" >
+                deadline = #{deadline,jdbcType=TIMESTAMP},
+            </if>
+            <if test="homeworkIds != null" >
+                homework_ids = #{homeworkIds,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null" >
+                status = #{status,jdbcType=BIT},
+            </if>
+            <if test="createrId != null" >
+                creater_id = #{createrId,jdbcType=INTEGER},
+            </if>
+            <if test="groupIds != null" >
+                group_ids = #{groupIds,jdbcType=VARCHAR},
+            </if>
+            <if test="studentIds != null" >
+                student_ids = #{studentIds,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.cn.mogo.sunEdu.core.model.HomeworkCollect" >
+        update t_homework_collect
+        set homework_name = #{homeworkName,jdbcType=VARCHAR},
+        pubdate = #{pubdate,jdbcType=TIMESTAMP},
+        deadline = #{deadline,jdbcType=TIMESTAMP},
+        homework_ids = #{homeworkIds,jdbcType=VARCHAR},
+        status = #{status,jdbcType=BIT},
+        creater_id = #{createrId,jdbcType=INTEGER},
+        group_ids = #{groupIds,jdbcType=VARCHAR},
+        student_ids = #{studentIds,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--作业待发布列表-->
+    <select id="getAnnounced" resultMap="BaseResultMap" parameterType="com.cn.mogo.sunEdu.core.model.Teacher">
+        select *
+        FROM t_homework_collect
+        WHERE creater_id = #{teacherId, jdbcType=INTEGER} AND UNIX_TIMESTAMP(pubdate)>UNIX_TIMESTAMP(NOW()) AND status = 0
+    </select>
+    <!--立刻发布作业-->
+    <update id="immePublish" parameterType="com.cn.mogo.sunEdu.core.model.HomeworkCollect">
+        UPDATE t_homework_collect
+        SET pubdate = now()
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+    <!--删除待发布作业-->
+    <update id="delPublish" parameterType="com.cn.mogo.sunEdu.core.model.HomeworkCollect">
+        UPDATE t_homework_collect
+        SET status = #{status,jdbcType=BIT}
+        WHERE id = #{id, jdbcType=INTEGER}
+    </update>
+
+    <!--已提交作业的学生-->
+    <select id="selectStudentHomeWorkList" resultType="java.lang.String" parameterType="java.lang.Integer">
+        SELECT
+            DISTINCT ta.student_id
+        FROM
+            t_answer_sheet ta
+        WHERE
+            ta.sub_collect = #{workId}
+    </select>
+
+    <!--查询出老师发布的作业信息-->
+    <select id="selectTeacherHomeWorkStatusList"  resultType="com.cn.mogo.sunEdu.core.model.vo.HomeWorkStatusVo" parameterType="com.cn.mogo.sunEdu.core.model.params.HomeWorkParams">
+        SELECT  TTTTT.`status`,
+                TTTTT.workId homeworkId,
+                TTTTT.creater_id teacherId,
+                TTTTT.student_ids studentIds,
+                DATE_FORMAT(TTTTT.deadline,'%Y-%m-%d %H:%i:%s') deadline,
+                TTTTT.homework_name homeworkName,
+                TTTTT.total_number totalNumber,
+                TTTTT.checkedAnswerNum,
+                TTTTT.totalAnswerCommitNum,
+                IFNULL(T2222.commitStuNum,0) totalCommitNum  <!--上交学生个数-->
+        FROM(
+                SELECT
+                    total.`status`,
+                    total.workId,
+                    total.creater_id,
+                    total.student_ids,
+                    total.deadline,
+                    total.homework_name,
+                    total.total_number,
+                    IFNULL(temp.checkedAnswerNum,0) checkedAnswerNum,
+                    IFNULL(temp.totalAnswerCommitNum,0) totalAnswerCommitNum
+                FROM
+                        (
+                            SELECT
+                                thc.`status`,
+                                thc.id workId,
+                                thc.creater_id,
+                                thc.student_ids,
+                                thc.deadline,
+                                thc.homework_name,
+                                thc.total_number
+                            FROM
+                                t_homework_collect thc
+                            WHERE
+                                thc.creater_id = #{teacherId}
+                        ) total
+                LEFT JOIN
+                        (
+                                SELECT t1.workId, t1.totalAnswerCommitNum, IFNULL(t2.checkedAnswerNum,0) checkedAnswerNum
+                                FROM(
+                                        SELECT
+                                        COUNT(1) totalAnswerCommitNum, tas.sub_collect workId
+                                        FROM
+                                            t_answer_sheet tas
+                                        WHERE tas.sub_collect IN (
+                                                SELECT
+                                                thc.id
+                                                FROM
+                                                t_homework_collect thc
+                                                WHERE
+                                                thc.creater_id = #{teacherId}
+                                        )
+                                        GROUP BY tas.sub_collect
+                                ) t1
+                                LEFT JOIN  (
+                                        SELECT
+                                            COUNT(1) checkedAnswerNum, sub_collect workId
+                                        FROM
+                                            t_answer_sheet tas
+                                        WHERE tas.sub_collect IN (
+                                                SELECT
+                                                  thc.id
+                                                FROM
+                                                  t_homework_collect thc
+                                                WHERE
+                                                  thc.creater_id = #{teacherId}
+                                            )
+                                            and tas.`status` = 2
+                                GROUP BY tas.sub_collect
+                        ) t2
+                ON t1.workId = t2.workId
+        ) temp
+        ON total.workId = temp.workId
+        ) AS TTTTT
+        LEFT JOIN(
+                select
+                  count(DISTINCT tas.student_id) commitStuNum ,tas.sub_collect workId
+                FROM
+                    t_answer_sheet tas
+                where tas.sub_collect in (
+                                    SELECT
+                                        thc.id
+                                    FROM
+                                        t_homework_collect thc
+                                    WHERE
+                                        thc.creater_id = #{teacherId}
+                              )
+                GROUP BY tas.sub_collect
+        ) T2222
+        ON TTTTT.workId = T2222.workId
+        WHERE to_days(TTTTT.deadline) + 7 > to_days(NOW()) AND TTTTT.deadline > '1970-02-18' AND  TTTTT.`status` = 0
+    </select>
+
+
+    <!--====================================学生端接口====================================-->
+
+   <!-- 获取学生的作业集ID-->
+    <select id="selectHomeworkIdList" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT id FROM t_homework_collect WHERE  FIND_IN_SET(#{studentId,jdbcType=INTEGER},student_ids) AND (unix_timestamp(NOW())-unix_timestamp(pubdate))>0 AND (unix_timestamp(deadline)-unix_timestamp(NOW()))>0;
+    </select>
+
+    <!--获取学生作业列表-->
+    <select id="selectStudentHomeWorkStatusList" resultType="com.cn.mogo.sunEdu.core.model.vo.student.StudentHomeWorkStatusVo" parameterType="com.cn.mogo.sunEdu.core.model.params.student.StudentHomeWorkStatusParams">
+        SELECT
+            total_tab.`status`,
+			total_tab.homeworkName,
+            total_tab.total_number totalNumber,
+            total_tab.groupIds,
+            total_tab.studentIds,
+            total_tab.workId,
+            total_tab.pubdate,
+            DATE_FORMAT(total_tab.deadline,'%Y-%m-%d %H:%i:%s') deadline,
+            DATE_FORMAT(total_tab.deadline,'%Y-%m-%d %H:%i:%s') deadlineStr,
+			IFNULL(temp_commit_tab.totalAnswerCommitNum,0) totalAnswerCommitNum, 
+			IFNULL(temp_check_tab.checkedAnswerNum,0) checkedAnswerNum,
+            IFNULL(tsc.sub_collection_ids,"") subCollectionIds
+		FROM
+			(
+				SELECT
+                    thc.`status`,
+					thc.id workId,
+					thc.homework_name homeworkName,
+                    thc.group_ids groupIds,
+                    thc.student_ids studentIds,
+                    thc.deadline,
+                    thc.total_number,
+                    thc.pubdate
+				FROM
+					t_homework_collect thc
+				LEFT JOIN (
+					SELECT
+						tas.id,
+						tas.student_id studentId,
+						tas.sub_collect workId
+					FROM
+						t_answer_sheet tas
+					WHERE
+						tas.sub_collect IN (
+							<!--#查询学生截至时间前后7天内的作业列表-->
+							SELECT
+								thc.id
+							FROM
+								t_homework_collect thc
+							WHERE TO_DAYS(NOW()) &lt; (TO_DAYS(thc.deadline) + 7)
+							AND FIND_IN_SET(#{studentId}, thc.student_ids)
+                            <!--thc.student_ids LIKE CONCAT("%,",#{studentId},",%")-->
+						)
+					AND tas.student_id = #{studentId} GROUP BY tas.sub_collect
+				) temp ON temp.workId = thc.id
+				WHERE TO_DAYS(NOW()) &lt; (TO_DAYS(thc.deadline) + 7)
+				AND FIND_IN_SET(#{studentId}, thc.student_ids)
+			) total_tab
+		LEFT JOIN (
+            <!--#查询学生作业上交答案情况-->
+			SELECT
+				COUNT(1) totalAnswerCommitNum,
+				tas.sub_collect workId
+			FROM
+				t_answer_sheet tas
+			WHERE
+				tas.sub_collect IN (
+					SELECT
+						thc.id
+					FROM
+						t_homework_collect thc
+					WHERE TO_DAYS(NOW()) &lt; (TO_DAYS(thc.deadline) + 7)
+					AND FIND_IN_SET(#{studentId}, thc.student_ids)
+				)
+			AND tas.student_id = #{studentId}
+			GROUP BY tas.sub_collect
+		) temp_commit_tab ON total_tab.workId = temp_commit_tab.workId
+		LEFT JOIN (
+			<!--#查询学生作业批改答案情况-->
+			SELECT
+				COUNT(1) checkedAnswerNum,
+				sub_collect workId
+			FROM
+				t_answer_sheet tas
+			WHERE
+				tas.sub_collect IN (
+					SELECT
+						thc.id
+					FROM
+						t_homework_collect thc
+					WHERE TO_DAYS(NOW()) &lt; (TO_DAYS(thc.deadline) + 7)
+					AND FIND_IN_SET(#{studentId}, thc.student_ids)
+				)
+			AND tas.student_id = #{studentId}
+			AND tas.`status` = 2
+			GROUP BY tas.sub_collect
+		) temp_check_tab ON total_tab.workId = temp_check_tab.workId
+        LEFT JOIN t_stu_collection tsc ON temp_check_tab.workId = tsc.collection_id
+        AND tsc.student_id = #{studentId} AND tsc.collection_status = 1 AND tsc.collection_types = 1
+        WHERE 1 = 1 AND total_tab.`status` = 0 AND total_tab.pubdate &lt; now()
+        <if test="groupId != null">
+            AND FIND_IN_SET( #{groupId} ,total_tab.groupIds)
+        </if>
+    </select>
+    <!--获取学生作业未上传答案列表-->
+    <select id="selectYetUpload" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT * FROM t_homework_collect WHERE FIND_IN_SET(id,#{hwIdList,jdbcType=VARCHAR}) AND status=0 AND (deadline - now())>0;
+    </select>
+
+    <!--获取学生作业集信息-->
+    <select id="getHWList" parameterType="com.cn.mogo.sunEdu.core.model.params.student.ScoreReportParam" resultMap="BaseResultMap">
+        select * from t_homework_collect WHERE FIND_IN_SET(#{studentId},student_ids) AND creater_id IN(SELECT teacher_id FROM `t_teacher` WHERE subject=#{subjectId})
+         AND (sec_to_time(deadline) - sec_to_time(now())) >-(24 *7* 3600) AND (sec_to_time(now() - sec_to_time(deadline))) >0 AND status =0;
+    </select>
+</mapper>

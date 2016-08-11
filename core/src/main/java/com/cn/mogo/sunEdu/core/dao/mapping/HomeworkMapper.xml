@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cn.mogo.sunEdu.core.dao.HomeworkMapper">
+  <resultMap id="BaseResultMap" type="com.cn.mogo.sunEdu.core.model.Homework">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="add_time" jdbcType="TIMESTAMP" property="addTime" />
+    <result column="homework_name" jdbcType="VARCHAR" property="homeworkName" />
+    <result column="subject_score" jdbcType="DOUBLE" property="subjectScore" />
+    <result column="answer_address" jdbcType="VARCHAR" property="answerAddress" />
+    <result column="Picture_address" jdbcType="VARCHAR" property="pictureAddress" />
+    <result column="teacher_id" jdbcType="INTEGER" property="teacherId" />
+    <result column="related_discipline" jdbcType="VARCHAR" property="relatedDiscipline" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.cn.mogo.sunEdu.core.model.Homework">
+    <result column="detail" jdbcType="VARCHAR" property="detail" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, add_time, homework_name, subject_score, answer_address, Picture_address, teacher_id, 
+    related_discipline, status
+  </sql>
+  <sql id="Blob_Column_List">
+    detail
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_homework
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_homework
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cn.mogo.sunEdu.core.model.Homework">
+    insert into t_homework (id, add_time, homework_name, 
+      subject_score, answer_address, Picture_address, 
+      teacher_id, related_discipline, status, 
+      detail)
+    values (#{id,jdbcType=INTEGER}, #{addTime,jdbcType=TIMESTAMP}, #{homeworkName,jdbcType=VARCHAR}, 
+      #{subjectScore,jdbcType=DOUBLE}, #{answerAddress,jdbcType=VARCHAR}, #{pictureAddress,jdbcType=VARCHAR}, 
+      #{teacherId,jdbcType=INTEGER}, #{relatedDiscipline,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
+      #{detail,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.cn.mogo.sunEdu.core.model.Homework">
+    insert into t_homework
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="addTime != null">
+        add_time,
+      </if>
+      <if test="homeworkName != null">
+        homework_name,
+      </if>
+      <if test="subjectScore != null">
+        subject_score,
+      </if>
+      <if test="answerAddress != null">
+        answer_address,
+      </if>
+      <if test="pictureAddress != null">
+        Picture_address,
+      </if>
+      <if test="teacherId != null">
+        teacher_id,
+      </if>
+      <if test="relatedDiscipline != null">
+        related_discipline,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="detail != null">
+        detail,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null">
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="homeworkName != null">
+        #{homeworkName,jdbcType=VARCHAR},
+      </if>
+      <if test="subjectScore != null">
+        #{subjectScore,jdbcType=DOUBLE},
+      </if>
+      <if test="answerAddress != null">
+        #{answerAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureAddress != null">
+        #{pictureAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="teacherId != null">
+        #{teacherId,jdbcType=INTEGER},
+      </if>
+      <if test="relatedDiscipline != null">
+        #{relatedDiscipline,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="detail != null">
+        #{detail,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cn.mogo.sunEdu.core.model.Homework">
+    update t_homework
+    <set>
+      <if test="addTime != null">
+        add_time = #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="homeworkName != null">
+        homework_name = #{homeworkName,jdbcType=VARCHAR},
+      </if>
+      <if test="subjectScore != null">
+        subject_score = #{subjectScore,jdbcType=DOUBLE},
+      </if>
+      <if test="answerAddress != null">
+        answer_address = #{answerAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureAddress != null">
+        Picture_address = #{pictureAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="teacherId != null">
+        teacher_id = #{teacherId,jdbcType=INTEGER},
+      </if>
+      <if test="relatedDiscipline != null">
+        related_discipline = #{relatedDiscipline,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="detail != null">
+        detail = #{detail,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.cn.mogo.sunEdu.core.model.Homework">
+    update t_homework
+    set add_time = #{addTime,jdbcType=TIMESTAMP},
+      homework_name = #{homeworkName,jdbcType=VARCHAR},
+      subject_score = #{subjectScore,jdbcType=DOUBLE},
+      answer_address = #{answerAddress,jdbcType=VARCHAR},
+      Picture_address = #{pictureAddress,jdbcType=VARCHAR},
+      teacher_id = #{teacherId,jdbcType=INTEGER},
+      related_discipline = #{relatedDiscipline,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      detail = #{detail,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cn.mogo.sunEdu.core.model.Homework">
+    update t_homework
+    set add_time = #{addTime,jdbcType=TIMESTAMP},
+      homework_name = #{homeworkName,jdbcType=VARCHAR},
+      subject_score = #{subjectScore,jdbcType=DOUBLE},
+      answer_address = #{answerAddress,jdbcType=VARCHAR},
+      Picture_address = #{pictureAddress,jdbcType=VARCHAR},
+      teacher_id = #{teacherId,jdbcType=INTEGER},
+      related_discipline = #{relatedDiscipline,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.mogo.sunEdu.core.dao.StuCollectionMapper" >
+  <resultMap id="BaseResultMap" type="com.cn.mogo.sunEdu.core.model.StuCollection" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="student_id" property="studentId" jdbcType="INTEGER" />
+    <result column="collection_types" property="collectionTypes" jdbcType="INTEGER" />
+    <result column="collection_id" property="collectionId" jdbcType="INTEGER" />
+    <result column="sub_collection_ids" property="subCollectionIds" jdbcType="VARCHAR" />
+    <result column="collection_time" property="collectionTime" jdbcType="TIMESTAMP" />
+    <result column="collection_status" property="collectionStatus" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, student_id, collection_types, collection_id, sub_collection_ids, collection_time, 
+    collection_status
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.cn.mogo.sunEdu.core.model.StuCollectionExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_stu_collection
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_stu_collection
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_stu_collection
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.cn.mogo.sunEdu.core.model.StuCollectionExample" >
+    delete from t_stu_collection
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.cn.mogo.sunEdu.core.model.StuCollection" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_stu_collection (student_id, collection_types, collection_id, 
+      sub_collection_ids, collection_time, collection_status
+      )
+    values (#{studentId,jdbcType=INTEGER}, #{collectionTypes,jdbcType=INTEGER}, #{collectionId,jdbcType=INTEGER}, 
+      #{subCollectionIds,jdbcType=VARCHAR}, #{collectionTime,jdbcType=TIMESTAMP}, #{collectionStatus,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cn.mogo.sunEdu.core.model.StuCollection" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_stu_collection
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="studentId != null" >
+        student_id,
+      </if>
+      <if test="collectionTypes != null" >
+        collection_types,
+      </if>
+      <if test="collectionId != null" >
+        collection_id,
+      </if>
+      <if test="subCollectionIds != null" >
+        sub_collection_ids,
+      </if>
+      <if test="collectionTime != null" >
+        collection_time,
+      </if>
+      <if test="collectionStatus != null" >
+        collection_status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="studentId != null" >
+        #{studentId,jdbcType=INTEGER},
+      </if>
+      <if test="collectionTypes != null" >
+        #{collectionTypes,jdbcType=INTEGER},
+      </if>
+      <if test="collectionId != null" >
+        #{collectionId,jdbcType=INTEGER},
+      </if>
+      <if test="subCollectionIds != null" >
+        #{subCollectionIds,jdbcType=VARCHAR},
+      </if>
+      <if test="collectionTime != null" >
+        #{collectionTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="collectionStatus != null" >
+        #{collectionStatus,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update t_stu_collection
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.studentId != null" >
+        student_id = #{record.studentId,jdbcType=INTEGER},
+      </if>
+      <if test="record.collectionTypes != null" >
+        collection_types = #{record.collectionTypes,jdbcType=INTEGER},
+      </if>
+      <if test="record.collectionId != null" >
+        collection_id = #{record.collectionId,jdbcType=INTEGER},
+      </if>
+      <if test="record.subCollectionIds != null" >
+        sub_collection_ids = #{record.subCollectionIds,jdbcType=VARCHAR},
+      </if>
+      <if test="record.collectionTime != null" >
+        collection_time = #{record.collectionTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.collectionStatus != null" >
+        collection_status = #{record.collectionStatus,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update t_stu_collection
+    set id = #{record.id,jdbcType=INTEGER},
+      student_id = #{record.studentId,jdbcType=INTEGER},
+      collection_types = #{record.collectionTypes,jdbcType=INTEGER},
+      collection_id = #{record.collectionId,jdbcType=INTEGER},
+      sub_collection_ids = #{record.subCollectionIds,jdbcType=VARCHAR},
+      collection_time = #{record.collectionTime,jdbcType=TIMESTAMP},
+      collection_status = #{record.collectionStatus,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cn.mogo.sunEdu.core.model.StuCollection" >
+    update t_stu_collection
+    <set >
+      <if test="studentId != null" >
+        student_id = #{studentId,jdbcType=INTEGER},
+      </if>
+      <if test="collectionTypes != null" >
+        collection_types = #{collectionTypes,jdbcType=INTEGER},
+      </if>
+      <if test="collectionId != null" >
+        collection_id = #{collectionId,jdbcType=INTEGER},
+      </if>
+      <if test="subCollectionIds != null" >
+        sub_collection_ids = #{subCollectionIds,jdbcType=VARCHAR},
+      </if>
+      <if test="collectionTime != null" >
+        collection_time = #{collectionTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="collectionStatus != null" >
+        collection_status = #{collectionStatus,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cn.mogo.sunEdu.core.model.StuCollection" >
+    update t_stu_collection
+    set student_id = #{studentId,jdbcType=INTEGER},
+      collection_types = #{collectionTypes,jdbcType=INTEGER},
+      collection_id = #{collectionId,jdbcType=INTEGER},
+      sub_collection_ids = #{subCollectionIds,jdbcType=VARCHAR},
+      collection_time = #{collectionTime,jdbcType=TIMESTAMP},
+      collection_status = #{collectionStatus,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

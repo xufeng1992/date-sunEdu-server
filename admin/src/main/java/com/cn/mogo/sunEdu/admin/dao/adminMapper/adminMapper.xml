@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.mogo.sunEdu.admin.dao.AdminDao">
+    <resultMap id="BaseResultMap" type="com.cn.mogo.sunEdu.admin.model.Admin">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="BOOLEAN"/>
+    </resultMap>
+
+</mapper>

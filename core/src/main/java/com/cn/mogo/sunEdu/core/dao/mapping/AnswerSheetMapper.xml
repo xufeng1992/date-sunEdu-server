@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.mogo.sunEdu.core.dao.AnswerSheetMapper" >
+  <resultMap id="BaseResultMap" type="com.cn.mogo.sunEdu.core.model.AnswerSheet" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="student_id" property="studentId" jdbcType="INTEGER" />
+    <result column="subject_id" property="subjectId" jdbcType="INTEGER" />
+    <result column="sub_collect" property="subCollect" jdbcType="INTEGER" />
+    <result column="pic_address" property="picAddress" jdbcType="VARCHAR" />
+    <result column="score" property="score" jdbcType="DOUBLE" />
+    <result column="teacher_voice" property="teacherVoice" jdbcType="VARCHAR" />
+    <result column="teacher_comment" property="teacherComment" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, student_id, subject_id, sub_collect, pic_address, score, teacher_voice, teacher_comment, 
+    status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from t_answer_sheet
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_answer_sheet
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.cn.mogo.sunEdu.core.model.AnswerSheet" >
+    insert into t_answer_sheet (id, student_id, subject_id, 
+      sub_collect, pic_address, score,
+      teacher_voice, teacher_comment, status
+      )
+    values (#{id,jdbcType=INTEGER}, #{studentId,jdbcType=INTEGER}, #{subjectId,jdbcType=INTEGER},
+      #{subCollect,jdbcType=INTEGER}, #{picAddress,jdbcType=VARCHAR}, #{score,jdbcType=DOUBLE},
+      #{teacherVoice,jdbcType=VARCHAR}, #{teacherComment,jdbcType=VARCHAR}, #{status,jdbcType=BIT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.cn.mogo.sunEdu.core.model.AnswerSheet" >
+    insert into t_answer_sheet
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="studentId != null" >
+        student_id,
+      </if>
+      <if test="subjectId != null" >
+        subject_id,
+      </if>
+      <if test="subCollect != null" >
+        sub_collect,
+      </if>
+      <if test="picAddress != null" >
+        pic_address,
+      </if>
+      <if test="score != null" >
+        score,
+      </if>
+      <if test="teacherVoice != null" >
+        teacher_voice,
+      </if>
+      <if test="teacherComment != null" >
+        teacher_comment,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="studentId != null" >
+        #{studentId,jdbcType=INTEGER},
+      </if>
+      <if test="subjectId != null" >
+        #{subjectId,jdbcType=INTEGER},
+      </if>
+      <if test="subCollect != null" >
+        #{subCollect,jdbcType=INTEGER},
+      </if>
+      <if test="picAddress != null" >
+        #{picAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="score != null" >
+        #{score,jdbcType=DOUBLE},
+      </if>
+      <if test="teacherVoice != null" >
+        #{teacherVoice,jdbcType=VARCHAR},
+      </if>
+      <if test="teacherComment != null" >
+        #{teacherComment,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cn.mogo.sunEdu.core.model.AnswerSheet" >
+    update t_answer_sheet
+    <set >
+      <if test="studentId != null" >
+        student_id = #{studentId,jdbcType=INTEGER},
+      </if>
+      <if test="subjectId != null" >
+        subject_id = #{subjectId,jdbcType=INTEGER},
+      </if>
+      <if test="subCollect != null" >
+        sub_collect = #{subCollect,jdbcType=INTEGER},
+      </if>
+      <if test="picAddress != null" >
+        pic_address = #{picAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="score != null" >
+        score = #{score,jdbcType=DOUBLE},
+      </if>
+      <if test="teacherVoice != null" >
+        teacher_voice = #{teacherVoice,jdbcType=VARCHAR},
+      </if>
+      <if test="teacherComment != null" >
+        teacher_comment = #{teacherComment,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cn.mogo.sunEdu.core.model.AnswerSheet" >
+    update t_answer_sheet
+    set student_id = #{studentId,jdbcType=INTEGER},
+      subject_id = #{subjectId,jdbcType=INTEGER},
+      sub_collect = #{subCollect,jdbcType=INTEGER},
+      pic_address = #{picAddress,jdbcType=VARCHAR},
+      score = #{score,jdbcType=DOUBLE},
+      teacher_voice = #{teacherVoice,jdbcType=VARCHAR},
+      teacher_comment = #{teacherComment,jdbcType=VARCHAR},
+      status = #{status,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!--查询作业集下 已经批阅 未批阅的学生列表信息-->
+  <select id="selectStudentAnswerSheetPages" resultType="com.cn.mogo.sunEdu.core.model.vo.StudentVo" parameterType="com.cn.mogo.sunEdu.core.model.params.StudentParams">
+      <!--#查询出作业集下  各个学生提交的作业已经被批阅的数量-->
+      SELECT
+              tem.id,
+              tem.checkedNum,
+              tem.commitNum,
+              tem.studentId,
+              tem.homeworkId,
+              ts.`name` studentName,
+              th.total_number totalNum
+      FROM
+      (
+          SELECT
+              IFNULL(t1.checkedNum, 0) checkedNum,
+              IFNULL(t2.commitNum, 0) commitNum,
+              t2.studentId,
+              t2.homeworkId,
+              t2.id
+          FROM
+              (
+              SELECT
+                  count(1) commitNum,
+                  ta.student_id studentId,
+                  ta.sub_collect homeworkId,
+                  ta.id
+              FROM
+                  t_answer_sheet ta
+              WHERE
+                  ta.sub_collect = #{workId}
+              GROUP BY
+                  ta.student_id
+              ) t2
+          LEFT JOIN (
+              SELECT
+                  count(1) checkedNum,
+                  ta.student_id studentId
+              FROM
+                  t_answer_sheet ta
+              WHERE
+                  ta.sub_collect = #{workId}
+              AND ta.`status` = 2
+              GROUP BY
+                  ta.student_id
+              ) t1 ON t1.studentId = t2.studentId
+          WHERE
+          1 = 1
+      ) tem
+      LEFT JOIN t_student ts ON tem.studentId = ts.student_id
+      LEFT JOIN t_homework_collect th ON th.id = tem.homeworkId
+      <if test="specStatus!=null">
+          <!--未批阅-->
+          <if test="specStatus==0"> WHERE tem.checkedNum  &lt;  tem.commitNum</if>
+          <if test="specStatus==1"> WHERE tem.checkedNum  &gt;=  tem.commitNum</if>
+      </if>
+  </select>
+
+    <!--统计 查询作业集下 已经批阅 未批阅的学生列表信息 数量-->
+    <select id="selectStudentAnswerSheetCount" resultType="java.lang.Integer" parameterType="com.cn.mogo.sunEdu.core.model.params.StudentParams">
+        <!--#查询出作业集下  各个学生提交的作业已经被批阅的数量-->
+        SELECT
+            count(1)
+        FROM
+        (
+            SELECT
+                IFNULL(t1.checkedNum, 0) checkedNum,
+                IFNULL(t2.commitNum, 0) commitNum,
+                t2.studentId,
+                t2.homeworkId
+            FROM
+            (
+                SELECT
+                    count(1) commitNum,
+                    ta.student_id studentId,
+                    ta.sub_collect homeworkId
+                FROM
+                    t_answer_sheet ta
+                WHERE
+                    ta.sub_collect = #{workId}
+                GROUP BY
+                    ta.student_id
+            ) t2
+            LEFT JOIN (
+                SELECT
+                    count(1) checkedNum,
+                    ta.student_id studentId
+                FROM
+                    t_answer_sheet ta
+                WHERE
+                    ta.sub_collect = #{workId}
+                AND ta.`status` = 2
+                GROUP BY
+                    ta.student_id
+            ) t1 ON t1.studentId = t2.studentId
+            WHERE
+            1 = 1
+        ) tem
+        LEFT JOIN t_student ts ON tem.studentId = ts.student_id
+        LEFT JOIN t_homework_collect th ON th.id = tem.homeworkId
+        <if test="specStatus!=null">
+            <!--未批阅-->
+            <if test="specStatus==0"> WHERE tem.checkedNum  &lt;  tem.commitNum</if>
+            <if test="specStatus==1"> WHERE tem.checkedNum  &gt;=  tem.commitNum</if>
+        </if>
+    </select>
+
+    <!--学生作业状态列表-->
+    <select id="selectAnswerSheetList" parameterType="com.cn.mogo.sunEdu.core.model.params.AnswerParams" resultType="com.cn.mogo.sunEdu.core.model.vo.AnswerVo">
+        SELECT
+            ta.id,
+            IFNULL(ta.pic_address,"") picAddress,
+            IFNULL(th.total_points,0) totalScore,
+            IFNULL(ta.score,0) score,
+            ta.subject_id subjectId,
+            ta.`status` `status`,
+            ta.student_id studentId,
+            ta.sub_collect workId,
+            th.total_points totalScore
+        FROM
+            t_answer_sheet ta
+        LEFT JOIN
+		    t_homework_collect th ON  ta.sub_collect = th.id
+        WHERE
+            ta.sub_collect = #{workId}
+        AND
+            ta.student_id = #{studentId}
+        ORDER BY
+            ta.subject_id ASC,
+            ta.`status` DESC
+    </select>
+
+
+    <update id="updateDetailByPrimaryKeySelective" parameterType="com.cn.mogo.sunEdu.core.model.params.AnswerSheetParams" >
+        update
+            t_answer_sheet
+        set
+            pic_address = #{picAddress},
+            score = #{score},
+            teacher_voice = #{teacherVoice},
+            teacher_comment = #{teacherComment},
+            status = #{status}
+        where
+            id = #{id,jdbcType=INTEGER}
+    </update>
+
+
+    <!--已批改作业提交时间列表-->
+    <select id="selectCheckedAnswerCommitList" parameterType="com.cn.mogo.sunEdu.core.model.params.AnswerCheckParams" resultType="com.cn.mogo.sunEdu.core.model.vo.AnswerCheckVo">
+        SELECT
+            t.id,
+            t.submit_time submitTime,
+            t.student_id studentId,
+            ts.`name` studentName,
+            t.workId
+        FROM
+            (
+                SELECT
+                    temp.sub_collect workId,
+                    tem1.id,
+                    temp.submit_time,
+                    temp.student_id
+                FROM
+                    (
+                        SELECT
+                            ta.id
+                        FROM
+                            t_answer_sheet ta
+                        WHERE
+                            ta.sub_collect = #{workId}
+                        GROUP BY
+                            ta.student_id
+                    ) tem1
+                LEFT JOIN t_answer_sheet temp ON tem1.id = temp.id
+            ) t
+        LEFT JOIN t_student ts ON ts.student_id = t.student_id
+        <if test="sortStatus!=null">
+            <if test="sortStatus==0">ORDER BY t.submit_time DESC </if>
+            <if test="sortStatus==1">ORDER BY t.submit_time ASC </if>
+        </if>
+    </select>
+
+    <select id="selectCheckedAnswerAccuracyList" resultType="com.cn.mogo.sunEdu.core.model.vo.AnswerAccuracyVo" parameterType="com.cn.mogo.sunEdu.core.model.params.AnswerAccuracyParams">
+        SELECT
+            tem.studentId,
+            tem.studentScore,
+            th.total_points totalScore,
+            ts.`name` studentName,
+            th.id workId
+        FROM
+            (
+                SELECT
+                    ta.student_id studentId,
+                    SUM(ta.score) studentScore,
+                    ta.sub_collect workId
+                FROM
+                    t_answer_sheet ta
+                WHERE
+                    ta.sub_collect = #{workId}
+                GROUP BY
+                    ta.student_id
+            ) tem
+        LEFT JOIN t_homework_collect th ON tem.workId = th.id
+        LEFT JOIN t_student ts ON ts.student_id = tem.studentId
+        <if test="sortStatus!=null">
+            <if test="sortStatus==0">ORDER BY tem.studentScore DESC </if>
+            <if test="sortStatus==1">ORDER BY tem.studentScore ASC </if>
+        </if>
+    </select>
+
+    <!--作业集统计信息-->
+    <select id="selectHomeworkStatistics" resultType="com.cn.mogo.sunEdu.core.model.vo.HomeworkStatisticsVo" parameterType="com.cn.mogo.sunEdu.core.model.params.HomeworkStatisticsParams">
+        SELECT
+            ta.id ,
+            SUM(ta.score) stuScore,
+            th.total_points totalScore ,
+            ROUND((SUM(ta.score)/th.total_points)*100,0) scorePercent,
+          ta.student_id studentId,
+            ta.sub_collect workId,
+            th.student_ids studentIds
+        FROM
+            t_answer_sheet ta
+        LEFT JOIN
+            t_homework_collect th
+        ON th.id = ta.sub_collect
+        WHERE
+            ta.sub_collect = #{workId}
+        GROUP BY
+            ta.student_id
+        ORDER BY stuScore ASC
+    </select>
+
+    <!--学生提交作业答案-->
+    <insert id="insertAnswerSheetBatch" useGeneratedKeys="true" parameterType="java.util.List">
+        <selectKey resultType="long" keyProperty="id" order="AFTER">
+            SELECT
+            LAST_INSERT_ID()
+        </selectKey>
+        insert into t_answer_sheet
+            ( submit_time, student_id, subject_id, sub_collect, pic_address, status)
+        values
+        <foreach collection="list" item="item" index="index" separator="," >
+            ( #{item.submitTime}, #{item.studentId}, #{item.subjectId}, #{item.workId}, #{item.picAddress}, #{item.answerStatus} )
+        </foreach>
+    </insert>
+
+    <!--学生修改作业答案-->
+    <update id="updateAnswerSheetBatch"  parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update t_answer_sheet
+            <set>
+                pic_address = #{item.picAddress}
+            </set>
+            where id = ${item.answerId}
+        </foreach>
+    </update>
+
+
+    <select id="selectStudentAnswerDetailById" resultType="com.cn.mogo.sunEdu.core.model.vo.student.AnswerCheckDetailResultVo" parameterType="com.cn.mogo.sunEdu.core.model.params.student.AnswerCheckDetailParams" >
+        select
+          id,
+          student_id studentId,
+          subject_id subjectId,
+          sub_collect workId,
+          pic_address picAddress,
+          score,
+          teacher_voice teacherVoice,
+          teacher_comment teacherComment,
+          `status`
+        from t_answer_sheet
+        where id = #{id} AND student_id = #{studentId} LIMIT 1
+    </select>
+
+    <select id="selectHomeworkIdList" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT distinct sub_collect FROM t_answer_sheet WHERE student_id=#{studentId,jdbcType=INTEGER}
+    </select>
+   <!-- 获取作业得分-->
+    <select id="getScoreSum" parameterType="com.cn.mogo.sunEdu.core.model.AnswerSheet" resultType="java.lang.Double">
+        SELECT COALESCE(SUM(score),0) FROM `t_answer_sheet` WHERE student_id=#{studentId} AND sub_collect=#{subCollect};
+    </select>
+
+    <!--答案列表信息-->
+    <select id="selectAnswerSheetListByIds" parameterType="java.util.List" resultType="com.cn.mogo.sunEdu.core.model.AnswerSheet">
+        SELECT
+            ta.id,
+            IFNULL(ta.pic_address,"") picAddress,
+            IFNULL(ta.score,0) score,
+            ta.subject_id subjectId,
+            ta.`status` `status`,
+            ta.student_id studentId,
+            ta.sub_collect workId,
+            ta.sub_collect subCollect
+        FROM
+          t_answer_sheet ta
+        WHERE
+          ta.id IN
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        ORDER BY
+        ta.subject_id ASC,
+        ta.`status` DESC
+    </select>
+
+</mapper>

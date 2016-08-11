@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.mogo.sunEdu.core.dao.PushDoMapper" >
+  <resultMap id="BaseResultMap" type="com.cn.mogo.sunEdu.core.model.PushDo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="push_content" property="pushContent" jdbcType="VARCHAR" />
+    <result column="push_time" property="pushTime" jdbcType="TIMESTAMP" />
+    <result column="push_device" property="pushDevice" jdbcType="INTEGER" />
+    <result column="push_status" property="pushStatus" jdbcType="INTEGER" />
+    <result column="sender_account_type" property="senderAccountType" jdbcType="INTEGER" />
+    <result column="push_people" property="pushPeople" jdbcType="INTEGER" />
+    <result column="receiver" property="receiver" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, push_content, push_time, push_device, push_status, sender_account_type, push_people, 
+    receiver
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.cn.mogo.sunEdu.core.model.PushDoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_push
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="getPushInfo" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_push
+    where receiver = #{studentId,jdbcType=INTEGER} AND (TO_DAYS(push_time)) - TO_DAYS(NOW())>=-7;
+  </select>
+  <!--<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >-->
+    <!--delete from t_push-->
+    <!--where id = #{id,jdbcType=INTEGER}-->
+  <!--</delete>-->
+  <delete id="deleteByExample" parameterType="com.cn.mogo.sunEdu.core.model.PushDoExample" >
+    delete from t_push
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.cn.mogo.sunEdu.core.model.PushDo" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into t_push (push_content, push_time, push_device, 
+      push_status, sender_account_type, push_people, 
+      receiver)
+    values (#{pushContent,jdbcType=VARCHAR}, #{pushTime,jdbcType=TIMESTAMP}, #{pushDevice,jdbcType=INTEGER}, 
+      #{pushStatus,jdbcType=INTEGER}, #{senderAccountType,jdbcType=INTEGER}, #{pushPeople,jdbcType=INTEGER}, 
+      #{receiver,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertPushMessage" parameterType="java.util.List" >
+    insert into t_push(push_content,push_time,push_people,receiver) VALUES
+    <foreach collection="list" item="pushDoList" index="index" separator=",">
+      (#{pushDoList.pushContent,jdbcType=VARCHAR},now(),#{pushDoList.pushPeople},#{pushDoList.receiver})
+    </foreach>
+  </insert>
+  <!--<update id="updateByExampleSelective" parameterType="map" >-->
+    <!--update t_push-->
+    <!--<set >-->
+      <!--<if test="record.id != null" >-->
+        <!--id = #{record.id,jdbcType=INTEGER},-->
+      <!--</if>-->
+      <!--<if test="record.pushContent != null" >-->
+        <!--push_content = #{record.pushContent,jdbcType=VARCHAR},-->
+      <!--</if>-->
+      <!--<if test="record.pushTime != null" >-->
+        <!--push_time = #{record.pushTime,jdbcType=TIMESTAMP},-->
+      <!--</if>-->
+      <!--<if test="record.pushDevice != null" >-->
+        <!--push_device = #{record.pushDevice,jdbcType=INTEGER},-->
+      <!--</if>-->
+      <!--<if test="record.pushStatus != null" >-->
+        <!--push_status = #{record.pushStatus,jdbcType=INTEGER},-->
+      <!--</if>-->
+      <!--<if test="record.senderAccountType != null" >-->
+        <!--sender_account_type = #{record.senderAccountType,jdbcType=INTEGER},-->
+      <!--</if>-->
+      <!--<if test="record.pushPeople != null" >-->
+        <!--push_people = #{record.pushPeople,jdbcType=INTEGER},-->
+      <!--</if>-->
+      <!--<if test="record.receiver != null" >-->
+        <!--receiver = #{record.receiver,jdbcType=INTEGER},-->
+      <!--</if>-->
+    <!--</set>-->
+    <!--<if test="_parameter != null" >-->
+      <!--<include refid="Update_By_Example_Where_Clause" />-->
+    <!--</if>-->
+  <!--</update>-->
+  <!--<update id="updateByExample" parameterType="map" >-->
+    <!--update t_push-->
+    <!--set id = #{record.id,jdbcType=INTEGER},-->
+      <!--push_content = #{record.pushContent,jdbcType=VARCHAR},-->
+      <!--push_time = #{record.pushTime,jdbcType=TIMESTAMP},-->
+      <!--push_device = #{record.pushDevice,jdbcType=INTEGER},-->
+      <!--push_status = #{record.pushStatus,jdbcType=INTEGER},-->
+      <!--sender_account_type = #{record.senderAccountType,jdbcType=INTEGER},-->
+      <!--push_people = #{record.pushPeople,jdbcType=INTEGER},-->
+      <!--receiver = #{record.receiver,jdbcType=INTEGER}-->
+    <!--<if test="_parameter != null" >-->
+      <!--<include refid="Update_By_Example_Where_Clause" />-->
+    <!--</if>-->
+  <!--</update>-->
+  <!--<update id="updateByPrimaryKeySelective" parameterType="com.cn.mogo.sunEdu.core.model.PushDo" >-->
+    <!--update t_push-->
+    <!--<set >-->
+      <!--<if test="pushContent != null" >-->
+        <!--push_content = #{pushContent,jdbcType=VARCHAR},-->
+      <!--</if>-->
+      <!--<if test="pushTime != null" >-->
+        <!--push_time = #{pushTime,jdbcType=TIMESTAMP},-->
+      <!--</if>-->
+      <!--<if test="pushDevice != null" >-->
+        <!--push_device = #{pushDevice,jdbcType=INTEGER},-->
+      <!--</if>-->
+      <!--<if test="pushStatus != null" >-->
+        <!--push_status = #{pushStatus,jdbcType=INTEGER},-->
+      <!--</if>-->
+      <!--<if test="senderAccountType != null" >-->
+        <!--sender_account_type = #{senderAccountType,jdbcType=INTEGER},-->
+      <!--</if>-->
+      <!--<if test="pushPeople != null" >-->
+        <!--push_people = #{pushPeople,jdbcType=INTEGER},-->
+      <!--</if>-->
+      <!--<if test="receiver != null" >-->
+        <!--receiver = #{receiver,jdbcType=INTEGER},-->
+      <!--</if>-->
+    <!--</set>-->
+    <!--where id = #{id,jdbcType=INTEGER}-->
+  <!--</update>-->
+  <!--<update id="updateByPrimaryKey" parameterType="com.cn.mogo.sunEdu.core.model.PushDo" >-->
+    <!--update t_push-->
+    <!--set push_content = #{pushContent,jdbcType=VARCHAR},-->
+      <!--push_time = #{pushTime,jdbcType=TIMESTAMP},-->
+      <!--push_device = #{pushDevice,jdbcType=INTEGER},-->
+      <!--push_status = #{pushStatus,jdbcType=INTEGER},-->
+  <!--sender_account_type = #{senderAccountType,jdbcType=INTEGER},-->
+  <!--push_people = #{pushPeople,jdbcType=INTEGER},-->
+  <!--receiver = #{receiver,jdbcType=INTEGER}-->
+  <!--where id = #{id,jdbcType=INTEGER}-->
+<!--</update>-->
+</mapper>

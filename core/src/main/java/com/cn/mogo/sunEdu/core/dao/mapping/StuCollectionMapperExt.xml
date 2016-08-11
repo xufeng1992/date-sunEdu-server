@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.mogo.sunEdu.core.dao.StuCollectionMapperExt" >
+
+    <!--查询学生收藏作业列表信息-->
+    <select id="selectStudentCollectionList" resultType="com.cn.mogo.sunEdu.core.model.vo.student.StudentCollectionWorkVo" parameterType="com.cn.mogo.sunEdu.core.model.params.student.StudentCollectionParams" >
+        select
+            tsc.id,
+            student_id studentId,
+            collection_types collectionTypes,
+            collection_id collectionId,
+            collection_time collectionTime,
+            collection_status collectionStatus,
+            thc.homework_name homeworkName,
+            thc.deadline
+        FROM
+            t_stu_collection tsc
+        LEFT JOIN
+            t_homework_collect thc
+        ON tsc.collection_id = thc.id
+        WHERE tsc.student_id = #{studentId} and tsc.collection_status = 1
+    </select>
+
+
+</mapper>

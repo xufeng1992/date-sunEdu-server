@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.mogo.sunEdu.core.dao.AnswersMapper" >
+  <resultMap id="BaseResultMap" type="com.cn.mogo.sunEdu.core.model.Answers" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="hwc_id" property="hwcId" jdbcType="INTEGER" />
+    <result column="teacher_id" jdbcType="INTEGER" property="teacherId" />
+    <result column="group_ids" property="groupIds" jdbcType="VARCHAR" />
+    <result column="answers_url" property="answersUrl" jdbcType="VARCHAR" />
+    <result column="upload_time" property="uploadTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="BIT" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, hwc_id, teacher_id,group_id, answers_url, upload_time, status
+  </sql>
+
+  <!--<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >-->
+    <!--select -->
+    <!--<include refid="Base_Column_List" />-->
+    <!--from t_answers-->
+    <!--where id = #{id,jdbcType=INTEGER}-->
+  <!--</select>-->
+  <!--<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >-->
+    <!--delete from t_answers-->
+    <!--where id = #{id,jdbcType=INTEGER}-->
+  <!--</delete>-->
+
+  <insert id="uploadImage" parameterType="com.cn.mogo.sunEdu.core.model.Answers" >
+    insert into t_answers
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+
+      <if test="hwcId != null" >
+        hwc_id,
+      </if>
+      <if test="groupIds != null" >
+        group_ids,
+      </if>
+      <if test="teacherId != null" >
+        teacher_id,
+      </if>
+      <if test="answersUrl != null" >
+        answers_url,
+      </if>
+        upload_time,
+      <if test="status != null" >
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+
+      <if test="hwcId != null" >
+        #{hwcId,jdbcType=INTEGER},
+      </if>
+      <if test="groupIds != null" >
+        #{groupIds,jdbcType=VARCHAR},
+      </if>
+      <if test="teacherId != null" >
+        #{teacherId,jdbcType=INTEGER},
+      </if>
+      <if test="answersUrl != null" >
+        #{answersUrl,jdbcType=VARCHAR},
+      </if>
+        now(),
+      <if test="status != null" >
+        #{status,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+
+
+  <insert id="insert" parameterType="com.cn.mogo.sunEdu.core.model.Answers" >
+    insert into t_answers (id, hwc_id, teacher_id, group_id,
+      answers_url, upload_time, status
+      )
+    values (#{id,jdbcType=INTEGER}, #{hwcId,jdbcType=INTEGER}, #{teacherId,jdbcType=INTEGER},#{groupId,jdbcType=INTEGER},
+      #{answersUrl,jdbcType=VARCHAR}, #{uploadTime,jdbcType=TIMESTAMP}, #{status,jdbcType=BIT}
+      )
+  </insert>
+  <!--<insert id="insertSelective" parameterType="com.cn.mogo.sunEdu.core.model.Answers" >-->
+    <!--insert into t_answers-->
+    <!--<trim prefix="(" suffix=")" suffixOverrides="," >-->
+      <!--<if test="id != null" >-->
+        <!--id,-->
+      <!--</if>-->
+      <!--<if test="hwcId != null" >-->
+        <!--hwc_id,-->
+      <!--</if>-->
+      <!--<if test="groupId != null" >-->
+        <!--group_id,-->
+      <!--</if>-->
+      <!--<if test="teacherId != null" >-->
+        <!--teacher_id,-->
+      <!--</if>-->
+      <!--<if test="answersUrl != null" >-->
+        <!--answers_url,-->
+      <!--</if>-->
+      <!--<if test="uploadTime != null" >-->
+        <!--upload_time,-->
+      <!--</if>-->
+      <!--<if test="status != null" >-->
+        <!--status,-->
+      <!--</if>-->
+    <!--</trim>-->
+    <!--<trim prefix="values (" suffix=")" suffixOverrides="," >-->
+      <!--<if test="id != null" >-->
+        <!--#{id,jdbcType=INTEGER},-->
+      <!--</if>-->
+      <!--<if test="hwcId != null" >-->
+        <!--#{hwcId,jdbcType=INTEGER},-->
+      <!--</if>-->
+      <!--<if test="groupId != null" >-->
+        <!--#{groupId,jdbcType=INTEGER},-->
+      <!--</if>-->
+      <!--<if test="teacherId != null" >-->
+        <!--#{teacher_id,jdbcType=INTEGER},-->
+      <!--</if>-->
+      <!--<if test="answersUrl != null" >-->
+        <!--#{answersUrl,jdbcType=VARCHAR},-->
+      <!--</if>-->
+      <!--<if test="uploadTime != null" >-->
+        <!--#{uploadTime,jdbcType=TIMESTAMP},-->
+      <!--</if>-->
+      <!--<if test="status != null" >-->
+        <!--#{status,jdbcType=BIT},-->
+      <!--</if>-->
+    <!--</trim>-->
+  <!--</insert>-->
+  <update id="updateByPrimaryKeySelective" parameterType="com.cn.mogo.sunEdu.core.model.Answers" >
+    update t_answers
+    <set >
+      <if test="hwcId != null" >
+        hwc_id = #{hwcId,jdbcType=INTEGER},
+      </if>
+      <if test="groupId != null" >
+        group_id = #{groupId,jdbcType=INTEGER},
+      </if>
+      <if test="answersUrl != null" >
+        answers_url = #{answersUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadTime != null" >
+        upload_time = #{uploadTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cn.mogo.sunEdu.core.model.Answers" >
+    update t_answers
+    set hwc_id = #{hwcId,jdbcType=INTEGER},
+      group_id = #{groupId,jdbcType=INTEGER},
+      answers_url = #{answersUrl,jdbcType=VARCHAR},
+      upload_time = #{uploadTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+  <!--学生查看老师发布作业的答案-->
+  <select id="selectHomeWorkAnswerLookup" resultType="com.cn.mogo.sunEdu.core.model.vo.student.HomeWorkAnswerLookupVo" parameterType="com.cn.mogo.sunEdu.core.model.params.student.HomeWorkAnswerLookupParams">
+ 		SELECT
+		        thc.id workId,
+		        thc.homework_name homeworkName,
+		        thc.deadline ,
+                thc.total_number totalNumber,
+                thc.creater_id teacherId,
+                IFNULL(ta.`status`,0) teacherAnswerStatus,
+                IFNULL(ta.answers_url,'') answersUrl,
+                IFNULL(ta.upload_time,NULL) uploadTime
+        FROM
+        	t_homework_collect thc
+        LEFT JOIN t_answers ta ON thc.id = ta.hwc_id
+        WHERE FIND_IN_SET(#{studentId}, thc.student_ids) AND TO_DAYS(NOW()) &lt;= TO_DAYS(thc.deadline) + 7
+        AND thc.id = #{workId}
+  </select>
+  <select id="getSubjectName" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    SELECT DISTINCT subject FROM t_teacher WHERE teacher_id IN (
+      SELECT DISTINCT creater_id FROM t_homework_collect WHERE  id IN(
+       SELECT DISTINCT sub_collect FROM t_answer_sheet WHERE student_id =#{studentId,jdbcType=INTEGER})
+       AND (sec_to_time(deadline) - sec_to_time(now())) >-(24 *7* 3600) AND (sec_to_time(now() - sec_to_time(deadline)) >0));
+  </select>
+
+  <select id="selectAnswerByHomeworkId" resultMap="BaseResultMap"  parameterType="java.lang.Integer">
+    SELECT id, hwc_id , teacher_id,group_ids, answers_url, upload_time, status
+    FROM t_answers ta
+    WHERE ta.hwc_id = #{homeworkId} LIMIT 1
+  </select>
+
+</mapper>

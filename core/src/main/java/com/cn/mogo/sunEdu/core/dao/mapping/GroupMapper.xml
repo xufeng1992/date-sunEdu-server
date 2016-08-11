@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.mogo.sunEdu.core.dao.GroupMapper" >
+  <resultMap id="BaseResultMap" type="com.cn.mogo.sunEdu.core.model.Group" >
+    <id column="group_id" property="groupId" jdbcType="INTEGER" />
+    <result column="create_people" property="createPeople" jdbcType="INTEGER" />
+    <result column="group_name" property="groupName" jdbcType="VARCHAR" />
+    <result column="class_message" property="classMessage" jdbcType="VARCHAR" />
+    <result column="announcement" property="announcement" jdbcType="VARCHAR" />
+    <result column="group_status" property="groupStatus" jdbcType="BIT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="PushInfoVotMap" type="com.cn.mogo.sunEdu.core.model.vo.PushInfoVo" >
+    <id column="name" property="name" jdbcType="VARCHAR" />
+    <result column="teacher_id" property="teacherId" jdbcType="INTEGER" />
+    <result column="group_name" property="groupName" jdbcType="VARCHAR" />
+  </resultMap>
+
+
+  <sql id="Base_Column_List" >
+    group_id, group_name, class_message, create_people, announcement, group_status, create_time
+  </sql>
+  <select id="getGroupDetails" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_group
+    where group_id = #{groupId,jdbcType=INTEGER}
+  </select>
+
+  <select id="groupList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from t_group
+    where create_people = #{teacherId,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_group
+    where group_id = #{groupId,jdbcType=INTEGER}
+  </delete>
+  <insert id="createGroup" parameterType="com.cn.mogo.sunEdu.core.model.Group" >
+    insert into t_group (create_people,group_name, announcement,create_time)
+    values ( #{createPeople,jdbcType=INTEGER}, #{groupName,jdbcType=VARCHAR},#{announcement,jdbcType=VARCHAR}, now())
+  </insert>
+
+  <update id="updateGroup" parameterType="com.cn.mogo.sunEdu.core.model.Group" >
+    update t_group
+      <set >
+      <if test="announcement != null" >
+        announcement = #{announcement,jdbcType=VARCHAR},
+      </if>
+      <if test="groupName != null" >
+        group_name = #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="groupStatus != null" >
+        group_status = #{groupStatus,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where group_id = #{groupId,jdbcType=INTEGER}
+  </update>
+
+  <select id="stuFindClass" parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT * FROM t_group WHERE group_name  LIKE CONCAT('%',#{groupName},'%') OR group_id LIKE CONCAT('%',#{groupName},'%');
+  </select>
+  <!--获取老师名和班级名称-->
+  <select id="getPushInfo" parameterType="java.lang.Integer" resultMap="PushInfoVotMap">
+    SELECT g.group_name,t.name,t.teacher_id  FROM t_group g,t_teacher t WHERE group_id=#{groupId,jdbcType=INTEGER} AND t.teacher_id = g.create_people;
+  </select>
+</mapper>

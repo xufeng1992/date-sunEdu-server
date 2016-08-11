@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.mogo.sunEdu.core.dao.StuGroupMapper" >
+
+  <resultMap id="StuGroupResultMap" type="com.cn.mogo.sunEdu.core.model.Combine" >
+    <result column="group_id" property="groupId" jdbcType="INTEGER" />
+    <result column="group_name" property="groupName" jdbcType="VARCHAR" />
+    <result column="student_id" property="studentId" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="BIT" />
+  </resultMap>
+
+  <resultMap id="BaseResultMap" type="com.cn.mogo.sunEdu.core.model.StuGroup" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="group_id" property="groupId" jdbcType="INTEGER" />
+    <result column="student_id" property="studentId" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="BIT" />
+  </resultMap>
+
+  <resultMap id="BaseStuIdMap" type="java.lang.Integer" >
+    <result column="student_id" property="studentId" jdbcType="INTEGER" />
+  </resultMap>
+
+  <resultMap id="GroupResultMap" type="com.cn.mogo.sunEdu.core.model.Group" >
+    <id column="group_id" property="groupId" jdbcType="INTEGER" />
+    <result column="create_people" property="createPeople" jdbcType="INTEGER" />
+    <result column="group_name" property="groupName" jdbcType="VARCHAR" />
+    <result column="class_message" property="classMessage" jdbcType="VARCHAR" />
+    <result column="announcement" property="announcement" jdbcType="VARCHAR" />
+    <result column="group_status" property="groupStatus" jdbcType="BIT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, group_id, student_id, apply_time, agree_time, status
+  </sql>
+  <sql id="Base_StuId_list">
+    student_id
+  </sql>
+<!--我的中的班级消息-->
+  <select id="getMyClassMsg" resultMap="StuGroupResultMap" parameterType="java.lang.Integer" >
+    select s.name, s.student_id, g.group_id, g.group_name, sg.status
+    from t_stu_group sg ,t_group g , t_student s
+    where g.create_people = #{createPeople,jdbcType=INTEGER} AND sg.status = 0 AND sg.group_id = g.group_id
+    AND sg.student_id = s.student_id
+  </select>
+  <!--班群中的班级消息-->
+  <select id="getGroupClassMsg" resultMap="StuGroupResultMap" parameterType="java.lang.Integer" >
+    select s.name, s.student_id, g.group_id, g.group_name, sg.status
+    from t_stu_group sg ,t_group g , t_student s
+    where sg.group_id = #{groupId,jdbcType=INTEGER} AND sg.status = 0 AND sg.group_id = g.group_id
+    AND sg.student_id = s.student_id
+  </select>
+
+  <select id="getCount" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select COUNT(*)
+    from t_stu_group
+    where group_id = #{groupId,jdbcType=INTEGER} AND status = 1
+  </select>
+  <!-- /*获取已经加入群的和已申请加入的学生Ids*/-->
+  <select id="getAddStuIdList" resultMap="BaseStuIdMap" parameterType="java.lang.Integer">
+    SELECT <include refid="Base_StuId_list" />
+    FROM t_stu_group
+    WHERE group_id = #{groupId,jdbcType=INTEGER} AND  status = 1
+  </select>
+ <!-- /*获取已经加入群的和已申请加入的学生Ids*/-->
+  <select id="getStuIdList" resultMap="BaseStuIdMap" parameterType="java.lang.Integer">
+    SELECT <include refid="Base_StuId_list" />
+    FROM t_stu_group
+    WHERE group_id = #{groupId,jdbcType=INTEGER} AND  status != 2
+  </select>
+  <!--/*获取审核加入群的学生Ids*/-->
+  <select id="getUpStuIdList" resultMap="BaseStuIdMap" parameterType="java.lang.Integer">
+    SELECT <include refid="Base_StuId_list" />
+    FROM t_stu_group
+    WHERE group_id = #{groupId,jdbcType=INTEGER} AND  status = 0
+  </select>
+
+  <select id="getStuGroupList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_stu_group
+    where group_id = #{groupId,jdbcType=INTEGER} AND status = 0
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_stu_group
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="relAdd" parameterType="java.util.List" >
+    insert into t_stu_group ( group_id, student_id, apply_time,status)
+    values
+    <foreach collection="list" item="item" index="index" separator="," >
+      ( #{item.groupId,jdbcType=INTEGER}, #{item.studentId,jdbcType=INTEGER},now(),#{item.status,jdbcType=BIT})
+    </foreach>
+  </insert>
+  <insert id="insertSelective" parameterType="com.cn.mogo.sunEdu.core.model.StuGroup" >
+    insert into t_stu_group
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="groupId != null" >
+        group_id,
+      </if>
+      <if test="studentId != null" >
+        student_id,
+      </if>
+      <if test="applyTime != null" >
+        apply_time,
+      </if>
+      <if test="agreeTime != null" >
+        agree_time,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="groupId != null" >
+        #{groupId,jdbcType=INTEGER},
+      </if>
+      <if test="studentId != null" >
+        #{studentId,jdbcType=INTEGER},
+      </if>
+      <if test="applyTime != null" >
+        #{applyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="agreeTime != null" >
+        #{agreeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateStudent" parameterType="com.cn.mogo.sunEdu.core.model.StuGroup" >
+    update t_stu_group
+    <set >
+      <!--<if test="groupId != null" >-->
+        <!--group_id = #{groupId,jdbcType=INTEGER},-->
+      <!--</if>-->
+      <!--<if test="studentId != null" >-->
+        <!--student_id = #{studentId,jdbcType=INTEGER},-->
+      <!--</if>-->
+      <if test="applyTime != null" >
+        apply_time = #{applyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="agreeTime != null" >
+        agree_time = #{agreeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=BIT},
+      </if>
+    </set>
+    where group_id = #{groupId,jdbcType=INTEGER} AND student_id = #{studentId,jdbcType=INTEGER}
+  </update>
+
+  <update id="checkApply" parameterType="com.cn.mogo.sunEdu.core.model.Combine" >
+    update t_stu_group
+    <set >
+      <!--<if test="groupId != null" >-->
+      <!--group_id = #{groupId,jdbcType=INTEGER},-->
+      <!--</if>-->
+      <!--<if test="studentId != null" >-->
+      <!--student_id = #{studentId,jdbcType=INTEGER},-->
+      <!--</if>-->
+      <!--<if test="applyTime != null" >-->
+        <!--apply_time = #{applyTime,jdbcType=TIMESTAMP},-->
+      <!--</if>-->
+      <if test="status == 1" >
+        agree_time = now(),
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=BIT},
+      </if>
+    </set>
+    where group_id = #{groupId,jdbcType=INTEGER} AND student_id = #{studentId,jdbcType=INTEGER} AND status = 0
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.cn.mogo.sunEdu.core.model.StuGroup" >
+    update t_stu_group
+    set group_id = #{groupId,jdbcType=INTEGER},
+      student_id = #{studentId,jdbcType=INTEGER},
+      apply_time = #{applyTime,jdbcType=TIMESTAMP},
+      agree_time = #{agreeTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!--获取班群列表-->
+  <select id="getGroupList" parameterType="java.lang.Integer" resultMap="GroupResultMap">
+    SELECT * FROM t_group a WHERE a.group_id IN (SELECT DISTINCT group_id FROM t_stu_group WHERE student_id=#{studentId,jdbcType=INTEGER} AND status=1)
+  </select>
+  <select id="selectByStuGroup" parameterType="com.cn.mogo.sunEdu.core.model.StuGroup" resultType="java.lang.Integer">
+    SELECT COUNT(*) FROM t_stu_group WHERE student_id = #{studentId,jdbcType=INTEGER} AND group_id = #{groupId,jdbcType=INTEGER} AND status!=2
+  </select>
+  <insert id="stuApplyAdd" parameterType="com.cn.mogo.sunEdu.core.model.StuGroup" >
+  INSERT INTO t_stu_group(group_id, student_id, apply_time) VALUES (#{groupId,jdbcType=VARCHAR},#{studentId},now())
+  </insert>
+  <!--更新学生在班群列表的状态状态-->
+  <update id="relAddUpdate" parameterType="java.util.Map" >
+    update t_stu_group
+    set
+    agree_time = now(),
+    status = 1
+    where student_id IN
+    <foreach collection="valList" index="index" item="item" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    AND group_id = #{groupId}
+  </update>
+</mapper>
